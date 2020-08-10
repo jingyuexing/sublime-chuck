@@ -1,0 +1,395 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+file_extensions:
+  - ck
+  - chuck
+scope: source.ck
+variables:
+  value: '(?:now|true|false|maybe|NULL|null|me|pi)'
+  time_units: '(?:samp|ms|second|minute|hour|day|week)'
+  control: '(?:if|else|while|until|for|repeat|break|continue|return|switch)'
+  type: '(?:int|float|time|dur|void|same|complex|Event|string|OscRecv|Shred|UGen|SinOsc)'
+contexts:
+  main:
+    - include: match-any
+  base:
+    - include: type
+    - include: value
+    - include: string
+    - include: number
+    - include: comment
+    - include: match-operators
+    - include: punctuation-accessor-dot
+    - include: punctuation-separator-comma
+    - include: punctuation-terminator-semicolon
+
+  match-any:
+    - include: base
+    - include: keyword
+    - include: match-parens
+    - include: match-brackets
+    - include: match-braces
+  keyword:
+    - include: keyword-control-flow
+    - include: keyword-control-loop
+    - include: keyword-class
+    - include: match-unity
+  comment:
+    - include: comment-line
+    - include:  comment-block
+  string:
+    - match: '"'
+      scope: punctuation.definition.string.begin.log
+      push:
+        - meta_scope: string.quoted.other.log
+        - match: '"'
+          scope: punctuation.definition.string.end.log
+          pop: true
+  single-string:
+    - match: (')
+      scope: punctuation.definition.string.begin.log
+      push:
+        - meta_scope: string.quoted.single.log
+        - match: (')
+          scope: punctuation.definition.string.end.log
+          pop: true
+  match-unity:
+    - match: \b{{time_units}}\b
+      scope: support.type.ck
+  number:
+    - include: hex
+    - include: int
+    - include: float
+    - include: dur
+  hex:
+    - match: \b(0x[0-9a-fA-F]+)\b
+      scope: constant.numeric.hex.ck
+  int:
+    - match: \b([0-9]+)\b
+      scope: constant.numeric.integer.ck
+  float:
+    - match: \b(-)?([0-9]+\.[0-9]+)\b
+      scope: constant.numeric.float.ck
+  dur:
+    - match: \b(\d+(\.\d+)?)::second\b
+      scope: constant.numeric.dur.ck
+  value:
+    - match: \b{{value}}\b
+      scope: constant.language.ck
+  type:
+    - match: \b{{type}}\b
+      scope: support.type.builtin.ck
+    - include: buildin-type
+
+  punctuation-accessor-dot:
+    - match: \.
+      scope: punctuation.accessor.dot.ck
+
+  punctuation-separator-comma:
+    - match: \,
+      scope: punctuation.separator.comma.ck
+
+  punctuation-terminator-semicolon:
+    - match: ;
+      scope: punctuation.terminator.ck
+
+  match-language-var:
+    - match: \b(this|super|dac|blackhole|adc)\b
+      scope: variable.language.ck
+
+  match-operators: [
+    {
+      match: \+,
+      scope: keyword.operator.assignment.ck
+    },
+    {
+      match: '/',
+      scope: keyword.operator.assignment.ck
+    },
+    {
+      match: \-,
+      scope: keyword.operator.assignment.ck
+    },
+    {
+      match: \*,
+      scope: keyword.operator.assignment.ck
+    },
+    {
+      match: \%,
+      scope: keyword.operator.assignment.ck
+    },
+    {
+      match: \%=>,
+      scope: keyword.operator.assignment.ck
+    },
+    {
+      match: '::',
+      scope: keyword.operator.ck
+    },
+    {
+      match: \/=>,
+      scope: keyword.operator.assignment.ck
+    },
+    {
+      match: \*=>,
+      scope: keyword.operator.assignment.ck
+    },
+    {
+      match: '-=>',
+      scope: keyword.operator.assignment.ck
+    },
+    {
+      match: \+=>,
+      scope: keyword.operator.assignment.ck
+    },
+    {
+      match: =>,
+      scope: keyword.operator.ck
+    },
+    {
+      match: \@=>,
+      scope: keyword.operator.assignment.ck
+    },
+    {
+      match: \!=>,
+      scope: keyword.operator.assignment.ck
+    },
+    {
+      match: \>=,
+      scope: keyword.operator.ck
+    },
+    {
+      match: \<=,
+      scope: keyword.operator.ck
+    },
+    {
+      match: ==,
+      scope: keyword.operator.ck
+    },
+    {
+      match: \-\-,
+      scope: keyword.operator.assignment.ck
+    },
+    {
+      match: \+\+,
+      scope: keyword.operator.assignment.ck
+    },
+    {
+      match: \&\&,
+      scope: keyword.operator.ck
+    },
+    {
+      match: \|\|,
+      scope: keyword.operator.ck
+    },
+    {
+      match: '~',
+      scope: keyword.operator.ck
+    },
+    {
+      match: \!,
+      scope: keyword.operator.ck
+    },
+    {
+      match: \|,
+      scope: keyword.operator.ck
+    },
+    {
+      match: \&,
+      scope: keyword.operator.ck
+    },
+    {
+      match: \>,
+      scope: keyword.operator.ck
+    },
+    {
+      match: \<,
+      scope: keyword.operator.ck
+    },
+    {
+      match: =<,
+      scope: keyword.operator.ck
+    },
+    {
+      match: (^|∧),
+      scope: keyword.operator.ck
+    },
+    {
+      match: \^=,
+      scope: keyword.operator.assignment.ck
+    },
+    {
+      match: \$,
+      scope: keyword.operator.ck
+    }
+  ]
+
+  keyword-control-loop-for:
+    - match: \bfor\b
+      scope: keyword.control.loop.for.ck
+  keyword-control-loop-while:
+    - match: \b(while|do)\b
+      scope: keyword.control.loop.do-while.ck
+  keyword-control-loop-until:
+    - match: \buntil\b
+      scope: keyword.control.loop.repeat-until.ck
+  keyword-control-loop-repeat:
+    - match: \brepeat\b
+      scope: keyword.control.loop.repeat-until.ck
+  keyword-control-flow-if:
+    - match: \b(if)\b
+      scope: keyword.control.ck
+  keyword-control-flow-else:
+    - match: \belse\b
+      scope: keyword.control.ck
+
+  keyword-control-flow-switch:
+    - match: \bswitch\b
+      scope: keyword.control.flow.ck
+
+  keyword-control-flow-return:
+    - match: \b(return)\b
+      scope: keyword.control.flow.return.ck
+
+  keyword-control-flow-break:
+    - match: \b(break)\b
+      scope: keyword.control.flow.break.ck
+
+  keyword-control-flow:
+    - include: keyword-control-flow-if
+    - include: keyword-control-flow-else
+    - include: keyword-control-flow-switch
+    - include: keyword-control-flow-return
+    - include: keyword-control-flow-break
+
+  keyword-control-loop:
+    - include: keyword-control-loop-for
+    - include: keyword-control-loop-while
+    - include: keyword-control-loop-until
+    - include: keyword-control-loop-repeat
+
+  keyword-class:
+    - match: \bclass\b
+      scope: keyword.declaration.class.ck
+    - include: match-language-var
+    - include: keyword-class-extends
+    - include: keyword-class-static
+    - include: keyword-class-public
+    - include: keyword-class-private
+    - include: keyword-class-interface
+    - include: keyword-class-implements
+    - include: keyword-class-protected
+    - include: keyword-class-pure
+    - include: keyword-class-new
+    - include: keyword-const-var
+    - include: keyword-defined-function
+
+  keyword-class-extends:
+    - match: \bextends\b
+      scope: keyword.declaration.ck
+
+  keyword-class-public:
+    - match: \bpublic\b
+      scope: keyword.declaration.ck
+
+  keyword-class-interface:
+    - match: \binterface\b
+      scope: keyword.declaration.interface.ck
+
+  keyword-class-implements:
+    - match: \bimplements\b
+      scope: keyword.declaration.impl.ck
+
+  keyword-class-static:
+    - match: \bstatic\b
+      scope: keyword.declaration.ck
+
+  keyword-class-private:
+    - match: \bprivate\b
+      scope: keyword.declaration.ck
+
+  keyword-class-protected:
+    - match: \bprotected\b
+      scope: keyword.declaration.ck
+
+  keyword-class-pure:
+    - match: \bpure\b
+      scope: keyword.declaration.ck
+
+  keyword-const-var:
+    - match: \bconst\b
+      scope: keyword.declaration.ck
+
+  keyword-defined-function:
+    - match: \b(function|fun)\b
+      scope: storage.type.keyword.function.ck
+
+  keyword-spork:
+    - match: \bspork\b
+      scope: keyword.declaration.ck
+
+  keyword-class-new:
+    - match: \bnew\b
+      scope: keyword.declaration.class.ck
+  comment-line:
+    - match: //
+      scope: punctuation.definition.comment.ck
+      push:
+        - meta_scope: comment.line.ck
+        - match: $
+          pop: true
+  comment-block:
+    - match: /\*
+      scope: punctuation.definition.comment.begin.ck
+      push:
+        - meta_scope: comment.block.ck meta.block.ck
+        - match: \*/
+          scope: punctuation.definition.comment.end.ck
+          pop: true
+
+  match-parens:
+    - match: \(
+      scope: punctuation.section.parens.begin.ck
+      push:
+        - match: \)
+          scope: punctuation.section.parens.end.ck
+          pop: true
+        - include: base
+    - match: \)
+      scope: punctuation.section.parens.end.ck
+  match-brackets:
+    - match: \[
+      scope: punctuation.section.brackets.begin.ck
+      push:
+        - meta_scope: meta.brackets.ck
+        - match: \]
+          scope: punctuation.section.brackets.end.ck
+          pop: true
+        - include: base
+    - match: \]
+      scope: punctuation.section.brackets.end.ck
+  match-braces:
+    - match: \{
+      scope: punctuation.section.braces.begin.ck
+      push:
+        - meta_scope: meta.block.ck
+        - match: \}
+          scope: punctuation.section.braces.end.ck
+          pop: true
+        - include: base
+        - include: keyword
+    - match: \}
+      scope: punctuation.section.braces.end.ck
+  class-body:
+    - match: '(?=\w?[\w\s]*(?:class|(?:@)?interface|enum)\s+\w+)'
+      push:
+        - meta_scope: meta.class.ck
+          pop: true
+  function-body:
+    - match: ''
+      push:
+        - meta_scope: meta.function.ck
+  buildin-type:
+    - match: \b(Object|Midi(In|Out|Msg)|polar)\b
+      scope: support.type.ck
